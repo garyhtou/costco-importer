@@ -24,7 +24,7 @@ module Serializers
         item.name,
         "", # pretty name
         item.price,
-        item.tax_flag,
+        # item.tax_flag,
         item.total_price
       ]
     end
