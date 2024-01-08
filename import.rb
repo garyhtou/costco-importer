@@ -7,6 +7,8 @@ require_relative "discount"
 require_relative "warehouse"
 require_relative "tax_calculator"
 require_relative "member"
+require_relative "product"
+require_relative "instacart"
 
 require_relative "serializers/csv"
 

@@ -4,6 +4,7 @@ class Item
   attr_reader :price_cents, :unit, :tax_flag
   attr_reader :discounts
   attr_accessor :receipt
+
   def initialize(number:, name:, price_cents:, description:, unit:, tax_flag:)
     @number = number.to_i
     @name = name
@@ -14,6 +15,21 @@ class Item
 
     @discounts = [] # I've only seen one discount per item, but I'm not sure if that's always the case; thus the array
     @receipt = nil
+  end
+
+  def pretty_name
+    product&.name
+  end
+
+  def image_url
+    product&.image_url
+  end
+
+  def product
+    product = Product.new(@number)
+    return nil if product.not_found?
+
+    product
   end
 
   # Price after discounts and tax
@@ -56,6 +72,7 @@ class Item
 
     TaxCalculator.new(warehouse_number: @receipt.warehouse.number, tax_flag: @tax_flag)
   end
+
   delegate :tax_rate, :taxable?, to: :tax_calculator
 
 end
