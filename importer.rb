@@ -88,6 +88,7 @@ class Importer
     amount_cents = (item_json.dig("amount") * 100).round # it should be a whole float
 
     Discount.new(
+      number: item_json.dig("itemNumber"),
       associated_item_number: discount[:associated_item_number],
       unit: item_json.dig("unit").abs,
       amount_cents:
