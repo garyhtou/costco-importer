@@ -68,7 +68,9 @@ class Receipt
   end
 
   def validate!
-    warn "Receipt has unapplied discounts" if unapplied_discounts?
+    raise "Receipt has unapplied discounts" if unapplied_discounts?
+    raise "Receipt unit price mismatch" if @items.sum(&:price) != @items.sum { |i| i.unit * i.unit_price }
+    raise "Receipt unit price total mismatch" if total != @items.sum { |i| i.unit * i.unit_total_price }
   end
 
   def self.parse(filepath)

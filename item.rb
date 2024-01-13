@@ -18,7 +18,7 @@ class Item
   end
 
   def pretty_name
-    product&.name
+    product&.name || name.titleize
   end
 
   def image_url
@@ -57,6 +57,17 @@ class Item
   %w[total_price discounted_price price tax total_discount].each do |method_name|
     define_method method_name do
       send("#{method_name}_cents") / 100.0
+    end
+
+    # Define methods for Unit
+    define_method "unit_#{method_name}_cents" do
+      # This doesn't get rounded because calculating per-unit price can result
+      # in partial cents; mainly when discounts are applied (buy 1, get 1 free).
+      # Buy 1, get 1 free appears at 2 units, 1 discount. (e.g. (9.99 + 9.99 - 9.99) / 2 = 4.995)
+      send("#{method_name}_cents") / @unit.to_f
+    end
+    define_method "unit_#{method_name}" do
+      send("unit_#{method_name}_cents") / 100.0
     end
   end
 

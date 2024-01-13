@@ -12,18 +12,19 @@ module Serializers
         @receipt.items.each do |item|
           # Give each unit/quantity its own row
           item.unit.times do
-            csv << item_row(item)
+            csv << item_unit_row(item)
           end
         end
       end
     end
 
-    def item_row(item)
+    def item_unit_row(item)
       [
         item.number,
-        item.pretty_name || item.name,
-        image(item.image_url),
-        item.total_price
+        item.name,
+        item.pretty_name,
+        item.unit_price,
+        item.unit_total_price
       ]
     end
 
@@ -34,7 +35,7 @@ module Serializers
     end
 
     def header
-      ["Member #{@receipt.member.membership_number}", nil, nil, "Price + Tax"]
+      ["Member #{@receipt.member.membership_number}", nil, nil, "Price", "Price + Discount + Tax"]
     end
   end
 
