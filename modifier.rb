@@ -1,4 +1,4 @@
-class Discount
+class Modifier
   attr_reader :number, :associated_item_number
   attr_reader :unit, :amount_cents
   attr_accessor :item

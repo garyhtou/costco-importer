@@ -4,16 +4,33 @@ class TaxCalculator
     @tax_flag = tax_flag
   end
 
+  TAX_FLAGS = {
+    "Y": {
+      rate: :sales_tax_rate,
+      on: :modified_price_cents
+    },
+    "4": {
+      rate: :spirits_tax_rate,
+      on: :price_cents
+    }
+  }
+
+  def calculate_tax_cents(item)
+    return 0 unless taxable?
+
+    taxable_amount_method = TAX_FLAGS[@tax_flag.to_sym][:on]
+    warn ArgumentError, "Unknown tax flag \"#{@tax_flag}\"" if taxable_amount_method.nil?
+
+    (item.send(taxable_amount_method) * tax_rate).round
+  end
+
   def tax_rate
     return 0 unless taxable?
 
-    case @tax_flag
-    when "Y"
-      sales_tax_rate
-    else
-      # There may be other tax flags
-      raise ArgumentError, "Unknown tax flag. I'm not sure how to calculate tax for this"
-    end
+    rate_method = TAX_FLAGS[@tax_flag.to_sym][:rate]
+    warn ArgumentError, "Unknown tax flag \"#{@tax_flag}\". I'm not sure how to calculate tax for this" if rate_method.nil?
+
+    send rate_method
   end
 
   def sales_tax_rate
@@ -25,12 +42,23 @@ class TaxCalculator
     when 6, 95, 1190 # Tukwila, Tacoma, Lynnwood
       0.101
     else
-      raise ArgumentError, "Unknown warehouse. I'm not sure how to calculate tax for this location"
+      warn ArgumentError, "Unknown warehouse number \"#{@warehouse_number}\". I'm not sure how to calculate sales tax for this location"
+    end
+  end
+
+  def spirits_tax_rate
+    return 0 unless taxable?
+
+    case @warehouse_number
+    when 1 # Seattle
+      0.205
+    else
+      warn ArgumentError, "Unknown warehouse number \"#{@warehouse_number}\". I'm not sure how to calculate spirits tax for this location"
     end
   end
 
   def taxable?
-    @tax_flag != "N"
+    !@tax_flag.in? ["N", nil]
   end
 end
 

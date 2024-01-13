@@ -1,7 +1,7 @@
 class Receipt
   attr_reader :warehouse, :member
   attr_reader :datetime
-  attr_reader :items, :discounts, :unapplied_discounts
+  attr_reader :items, :modifiers, :unapplied_modifiers
 
   def initialize(warehouse:, member:, datetime:)
     @warehouse = warehouse
@@ -9,8 +9,8 @@ class Receipt
     @datetime = datetime.to_datetime
 
     @items = []
-    @discounts = []
-    @unapplied_discounts = []
+    @modifiers = []
+    @unapplied_modifiers = []
   end
 
   def total_cents
@@ -18,7 +18,7 @@ class Receipt
   end
 
   def subtotal_cents
-    @items.sum(&:discounted_price_cents)
+    @items.sum(&:modified_price_cents)
   end
 
   def tax_cents
@@ -36,8 +36,8 @@ class Receipt
   end
 
   def <<(item)
-    if item.is_a? Discount
-      @unapplied_discounts << item
+    if item.is_a? Modifier
+      @unapplied_modifiers << item
     else
       @items << item
     end
@@ -47,30 +47,30 @@ class Receipt
       item.receipt = self
     end
 
-    apply_discounts
+    apply_modifiers
   end
 
-  def apply_discounts
-    @unapplied_discounts = @unapplied_discounts.filter_map do |discount|
-      associated_item = @items.find { |i| i.number == discount.associated_item_number }
+  def apply_modifiers
+    @unapplied_modifiers = @unapplied_modifiers.filter_map do |modifier|
+      associated_item = @items.find { |i| i.number == modifier.associated_item_number }
       if associated_item
-        associated_item.apply_discount(discount)
-        @discounts << discount
+        associated_item.apply_modifier(modifier)
+        @modifiers << modifier
         next nil
       end
 
-      discount # keep this discount. it remains unapplied
+      modifier # keep this modifier. it remains unapplied
     end
   end
 
-  def unapplied_discounts?
-    @unapplied_discounts.any?
+  def unapplied_modifiers?
+    @unapplied_modifiers.any?
   end
 
   def validate!
-    raise "Receipt has unapplied discounts" if unapplied_discounts?
-    raise "Receipt unit price mismatch" if @items.sum(&:price) != @items.sum { |i| i.unit * i.unit_price }
-    raise "Receipt unit price total mismatch" if total != @items.sum { |i| i.unit * i.unit_total_price }
+    warn "Receipt has unapplied modifiers" if unapplied_modifiers?
+    warn "Receipt unit price cents mismatch" if @items.sum(&:price_cents) != @items.sum { |i| i.unit * i.unit_price_cents }
+    warn "Receipt unit price total cents mismatch" if total_cents != @items.sum { |i| i.unit * i.unit_total_price_cents }
   end
 
   def self.parse(filepath)
