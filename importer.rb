@@ -1,4 +1,5 @@
 require "json"
+require_relative "receipt"
 
 class Importer
   def initialize(filepath)

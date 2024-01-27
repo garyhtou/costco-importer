@@ -42,17 +42,24 @@ class Item
     tax_calculator.calculate_tax_cents(self)
   end
 
-  # Price after discounts, before tax
+  # Price after discounts/fees/additional taxes, before tax
   def modified_price_cents
     @price_cents + total_modified_cents
   end
 
-  # Total discount for this item (negative number)
+  # Total modified for this item (negative number)
   def total_modified_cents
     @modifiers.sum(&:amount_cents)
   end
 
-  %w[total_price modified_price price tax total_modified].each do |method_name|
+  # Total modified, only including discounts (excluding fees/additional taxes)
+  def total_discounted_cents
+    @modifiers.filter do |modifier|
+      modifier.amount_cents.negative?
+    end.sum(&:amount_cents)
+  end
+
+  %w[total_price modified_price price tax total_modified total_discounted].each do |method_name|
     define_method method_name do
       send("#{method_name}_cents") / 100.0
     end

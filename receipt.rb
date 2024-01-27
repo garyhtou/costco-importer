@@ -1,3 +1,14 @@
+require "active_support/all"
+
+require_relative "item"
+require_relative "modifier"
+require_relative "warehouse"
+require_relative "tax_calculator"
+require_relative "member"
+require_relative "product"
+
+require_relative "importer"
+
 class Receipt
   attr_reader :warehouse, :member
   attr_reader :datetime
