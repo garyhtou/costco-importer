@@ -20,8 +20,8 @@ module Serializers
 
     def item_unit_row(item)
       [
+        image(item.image_url),
         item.number,
-        item.name,
         item.pretty_name,
         item.unit_price,
         item.unit_total_price
@@ -35,7 +35,7 @@ module Serializers
     end
 
     def header
-      ["Member #{@receipt.member.membership_number}", nil, nil, "Price", "Price + Discount + Tax"]
+      ["Member #{@receipt.member.membership_number}", nil, nil, "Price", "Final Price"]
     end
   end
 
