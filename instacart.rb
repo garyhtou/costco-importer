@@ -1,6 +1,8 @@
 require "httparty"
 require "singleton"
 
+require_relative "instacart/discount"
+
 # Costco's Same Day delivery site uses Instacart
 #
 # This class is a wrapper around Instacart's private GraphQL API. It requires
@@ -27,29 +29,10 @@ class Instacart
     price_cents = (result.dig("viewSection", "priceString").remove("$").to_f * 100).round
 
     discount = result.dig("viewSection", "badge", "offerLabelString")&.then do |label|
-      # Example of labels:
-      # - Buy 1, get $2.60 off
-      # - Buy any 2, save $0.50
-      # - $2 off
-      # - $2.60 off; limit 10
-      # - Spend $28, save $5 (I'm not going to handle this case)
+      discount = Instacart::Discount.from_label(label)
+      next discount.to_h if discount.present?
 
-      /Buy.*(?<quantity>\d+),.*\$(?<amount>\d+(\.\d+)?)/i =~ label
-      if quantity.nil?
-        /\$(?<amount>\d+(\.\d+)?) off/i =~ label
-        quantity = 1 if amount.present?
-      end
-
-      unless quantity && amount
-        warn "Found unknown discount for #{instacart_id}: #{label}"
-        next nil
-      end
-
-      {
-        qualifying_quantity: quantity.to_i,
-        amount_cents: (amount.to_f * 100).round,
-        label:,
-      }
+      warn "Found unknown discount for #{instacart_id}: #{label}"
     end
 
     {
