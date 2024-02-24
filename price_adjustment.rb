@@ -1,4 +1,5 @@
 require_relative "receipt"
+require_relative "render_helper"
 
 # The purpose of this script is to check for possible price adjustments.
 # Costco allows for price adjustments within 30 days of purchase.
@@ -68,13 +69,6 @@ class PriceAdjuster
         end
       end
   end
-end
-
-def currency(amount = nil, cents: nil)
-  raise ArgumentError, "Provide either amount or cents" if amount.nil? && cents.nil?
-
-  amount ||= cents / 100.0
-  format("$%.2f", amount)
 end
 
 receipt_paths = Dir.glob("data/receipt*.json")

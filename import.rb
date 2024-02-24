@@ -1,5 +1,6 @@
 require_relative "receipt"
 require_relative "serializers/csv"
+require_relative "render_helper"
 
 require "debug"
 
@@ -16,4 +17,4 @@ File.open(filepath, "w") do |f|
 end
 
 puts "Wrote Receipt CSV to #{filepath}"
-puts "You brought #{receipt.total_items} items, totaling to $#{receipt.total}"
+puts "You brought #{receipt.total_items} items, totaling to $#{currency receipt.total}"
