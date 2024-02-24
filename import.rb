@@ -2,8 +2,6 @@ require_relative "receipt"
 require_relative "serializers/csv"
 require_relative "render_helper"
 
-require "debug"
-
 receipt = Receipt.parse("data/receipt.json")
 csv = Serializers::CSV.new(receipt).serialize
 
