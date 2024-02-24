@@ -29,8 +29,28 @@ class PriceAdjuster
           discount = item.product&.current_discount
           next unless discount
 
-          # Check qualification for discount
-          qualified_count = (item.unit / discount[:qualifying_quantity]).floor
+          # Check how many times we qualify for this discount
+          qualified_count =
+            if discount[:qualifying_quantity].present?
+              (item.unit / discount[:qualifying_quantity]).floor
+            elsif discount[:qualifying_amount_cents].present?
+              # N.B. The qualifying amount is pulled from Instacart. Instacart's
+              # prices are higher than in-warehouse. Thus, I'm not sure if the
+              # spending requirements are different (maybe lower?) in-warehouse.
+              #
+              # Also, I am assuming that the qualifying amount is based on the
+              # price (pre-tax).
+              (item.price_cents / discount[:qualifying_amount_cents]).floor
+            else
+              raise "Unknown qualification requirements for discount: #{discount.inspect}"
+            end
+
+          # Limit qualified count if necessary
+          if discount[:quantity_limit].present?
+            qualified_count = [qualified_count, discount[:quantity_limit]].min
+          end
+
+          # Skip if we don't qualify
           next if qualified_count.zero?
 
           receipt_total_discount_cents = item.total_discounted_cents.abs
@@ -43,7 +63,6 @@ class PriceAdjuster
             item: item,
             discount: discount,
 
-            discount_qualified_count: qualified_count,
             diff_cents:,
           }
         end

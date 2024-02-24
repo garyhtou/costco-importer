@@ -1,13 +1,8 @@
 class Instacart
   class Discount
-    attr_reader :label, :qualifying_quantity, :amount_cents
-
     def initialize(label)
       @label = label
       raise ArgumentError, "Label cannot be blank" if @label.blank?
-
-      @qualifying_quantity = nil
-      @amount_cents = nil
 
       parse_label
     end
@@ -18,14 +13,17 @@ class Instacart
     end
 
     def valid?
-      @amount_cents.present?
+      @amount_cents.present? && (@qualifying_quantity.present? || @qualifying_amount_cents.present?)
     end
 
     def to_h
       {
         label: @label,
+
         qualifying_quantity: @qualifying_quantity,
+        qualifying_amount_cents: @qualifying_amount_cents,
         amount_cents: @amount_cents,
+        quantity_limit: @quantity_limit,
       }
     end
 
@@ -33,6 +31,7 @@ class Instacart
     # evaluated from top to bottom until a match is found. They regexes may
     # contain the following named captures:
     #   - qualifying_quantity
+    #   - qualifying_amount
     #   - amount
     #   - quantity_limit
     PARSER_REGEXES = [
@@ -40,11 +39,11 @@ class Instacart
       # - Buy 1, get $2.60 off
       # - Buy any 2, save $0.50
 
-      /\$(?<amount>\d+(\.\d+)?) off(?:.*limit\s+(?<quantity_limit>\d+))?/i
+      /\$(?<amount>\d+(\.\d+)?) off(?:.*limit\s+(?<quantity_limit>\d+))?/i,
       # - $2 off
       # - $2.60 off; limit 10
 
-      # Other formats i'm currently not handling:
+      /Spend\s+\$(?<qualifying_amount>\d+(\.\d+)?),\s+save\s+\$(?<amount>\d+(\.\d+)?)/i,
       # - Spend $28, save $5
     ]
 
@@ -58,8 +57,15 @@ class Instacart
         @amount_cents = (captures["amount"].to_f * 100).round
 
         # Optional captures
-        @qualifying_quantity = captures["qualifying_quantity"]&.to_i || 1
+        @qualifying_quantity = captures["qualifying_quantity"]&.to_i
+        @qualifying_amount_cents = captures["qualifying_amount"]&.then do |qac|
+          (qac.to_f * 100).round
+        end
         @quantity_limit = captures["quantity_limit"]&.to_i
+
+        # Default values
+        @qualifying_quantity ||= 1 unless @qualifying_amount_cents.present?
+
         return
       end
     end
