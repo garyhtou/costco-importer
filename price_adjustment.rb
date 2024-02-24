@@ -30,5 +30,3 @@ receipt_paths.each do |path|
   end
 
 end
-
-

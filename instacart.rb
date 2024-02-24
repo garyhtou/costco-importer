@@ -30,9 +30,16 @@ class Instacart
       # Example of labels:
       # - Buy 1, get $2.60 off
       # - Buy any 2, save $0.50
+      # - $2 off
+      # - $2.60 off; limit 10
       # - Spend $28, save $5 (I'm not going to handle this case)
 
-      /Buy.*(?<quantity>\d+),.*\$(?<amount>\d+\.\d+)/i =~ label
+      /Buy.*(?<quantity>\d+),.*\$(?<amount>\d+(\.\d+)?)/i =~ label
+      if quantity.nil?
+        /\$(?<amount>\d+(\.\d+)?) off/i =~ label
+        quantity = 1 if amount.present?
+      end
+
       unless quantity && amount
         warn "Found unknown discount for #{instacart_id}: #{label}"
         next nil
