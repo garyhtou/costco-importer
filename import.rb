@@ -15,4 +15,4 @@ File.open(filepath, "w") do |f|
 end
 
 puts "Wrote Receipt CSV to #{filepath}"
-puts "You brought #{receipt.total_items} items, totaling to $#{currency receipt.total}"
+puts "You brought #{receipt.total_items} items, totaling to #{currency receipt.total}"
