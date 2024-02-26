@@ -35,7 +35,7 @@ module Serializers
     end
 
     def header
-      ["Member #{@receipt.member.membership_number}", nil, nil, "Price", "Final Price"]
+      ["Member #{@receipt.member.membership_number}", "Item ID", nil, "Price", "Final Price"]
     end
   end
 
