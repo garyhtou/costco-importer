@@ -39,8 +39,10 @@ class TaxCalculator
     case @warehouse_number
     when 1 # Seattle
       0.1025
-    when 6, 95, 1190 # Tukwila, Tacoma, Lynnwood
+    when 6, 95 # Tukwila, Tacoma
       0.101
+    when 1190 # Lynnwood
+      0.106
     else
       warn ArgumentError, "Unknown warehouse number \"#{@warehouse_number}\". I'm not sure how to calculate sales tax for this location"
     end
