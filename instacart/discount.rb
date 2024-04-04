@@ -35,11 +35,11 @@ class Instacart
     #   - amount
     #   - quantity_limit
     PARSER_REGEXES = [
-      /Buy.*(?<qualifying_quantity>\d+),.*\$(?<amount>\d+(\.\d+)?)/i,
+      /\ABuy.*(?<qualifying_quantity>\d+),.*\$(?<amount>\d+(\.\d+)?)/i,
       # - Buy 1, get $2.60 off
       # - Buy any 2, save $0.50
 
-      /\$(?<amount>\d+(\.\d+)?) off(?:.*limit\s+(?<quantity_limit>\d+))?/i,
+      /\A\$(?<amount>\d+(\.\d+)?) off(?:.*limit\s+(?<quantity_limit>\d+))?/i,
       # - $2 off
       # - $2.60 off; limit 10
 
