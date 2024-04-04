@@ -43,7 +43,10 @@ class Instacart
       # - $2 off
       # - $2.60 off; limit 10
 
-      /Spend\s+\$(?<qualifying_amount>\d+(\.\d+)?),\s+save\s+\$(?<amount>\d+(\.\d+)?)/i,
+      /\ASave \$(?<amount>\d+(\.\d+)?)/i,
+      # - Save $1.50
+
+      /\ASpend\s+\$(?<qualifying_amount>\d+(\.\d+)?),\s+save\s+\$(?<amount>\d+(\.\d+)?)/i,
       # - Spend $28, save $5
     ]
 
