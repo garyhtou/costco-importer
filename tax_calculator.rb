@@ -1,7 +1,8 @@
 class TaxCalculator
-  def initialize(warehouse_number:, tax_flag:)
+  def initialize(warehouse_number:, tax_flag:, date:)
     @warehouse_number = warehouse_number
     @tax_flag = tax_flag
+    @date = date
   end
 
   TAX_FLAGS = {
@@ -38,7 +39,7 @@ class TaxCalculator
 
     case @warehouse_number
     when 1 # Seattle
-      0.1025
+      @date.before?(Date.new(2024, 1, 1)) ? 0.1025 : 0.1035
     when 6, 95 # Tukwila, Tacoma
       0.101
     when 1190 # Lynnwood

@@ -86,7 +86,7 @@ class Item
   def tax_calculator
     warn ArgumentError, "Item must be associated with a receipt/warehouse to create TaxCalculator" unless @receipt.present?
 
-    TaxCalculator.new(warehouse_number: @receipt.warehouse.number, tax_flag: @tax_flag)
+    TaxCalculator.new(warehouse_number: @receipt.warehouse.number, tax_flag: @tax_flag, date: @receipt.datetime.to_date)
   end
 
   delegate :tax_rate, :taxable?, to: :tax_calculator
