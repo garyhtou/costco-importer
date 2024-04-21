@@ -86,7 +86,8 @@ receipt_paths.each do |path|
   adjuster.possible_adjustments.each do |adjustment|
     item, discount, diff_cents = adjustment.values_at(:item, :discount, :diff_cents)
 
-    puts "\nSave #{currency cents: diff_cents} on #{item.pretty_name} (#{item.number})"
+    puts "\nSave #{currency cents: diff_cents} on #{item.pretty_name}"
+    puts "\tLookup:            #{item.number} on #{receipt.datetime.strftime('%Y-%m-%d')}"
     puts "\tReceipt price:     #{currency item.unit_price} x #{item.unit} = #{currency item.price} (total: #{currency item.total_price})"
     puts "\tReceipt discount:  #{currency item.total_discounted}" +
            begin
