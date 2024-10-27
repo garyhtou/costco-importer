@@ -1,4 +1,4 @@
-class Instacart
+module Instacart
   class Discount
     def initialize(label)
       @label = label
@@ -7,9 +7,14 @@ class Instacart
       parse_label
     end
 
-    def self.from_label(label)
+    def self.from_label(label, id: nil)
+      # `id` just for better warn message
+      return nil if label.blank?
+
       discount = new(label)
       return discount if discount.valid?
+
+      warn "Found unknown discount for #{id}: #{label}"
     end
 
     def valid?

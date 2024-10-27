@@ -27,7 +27,7 @@ class PriceAdjuster
     @possible_adjustments ||=
       begin
         @receipt.items.filter_map do |item|
-          discount = item.product&.current_discount
+          discount = item.product&.discount
           next unless discount
 
           # Check how many times we qualify for this discount

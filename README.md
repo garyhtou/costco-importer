@@ -29,3 +29,12 @@ See [`/data/README.md`](data/README.md) for details.
 
 - To import, run `ruby import.rb`
 - To check for price adjustments, run `ruby price_adjustment.rb`
+
+## Instacart API
+
+Costco's same-day site is powered by Instacart. I've created a simple wrapper
+[`Instacart`](/instacart.rb) around their GraphQL API for searching and
+retrieving items.
+
+The wrapper automatically creates a guest user in order to authenticate with
+the API.
