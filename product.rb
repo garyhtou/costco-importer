@@ -1,5 +1,6 @@
 require_relative "instacart"
 require "json"
+require "ostruct"
 
 class Product
   def initialize(number)
