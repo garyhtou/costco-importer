@@ -3,4 +3,4 @@
 source "https://rubygems.org"
 
 gem "activesupport"
-gem "httparty", "~> 0.21.0"
+gem "httparty"
