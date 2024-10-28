@@ -77,7 +77,11 @@ class Importer
 
   def receipt_json
     # Assume there's only one receipt in the array
-    json.dig("data", "receipts").first
+    json.dig("data", "receiptsWithCounts", "receipts")&.first || json.dig("data", "receipts").first
+
+    # Costco's GraphQL API used to return receipt data under the `data.receipts`
+    # key, now it's under `data.receiptsWithCounts.receipts` and contains
+    # additional keys.
   end
 
   def json
