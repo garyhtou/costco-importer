@@ -55,8 +55,8 @@ module Instacart
 
     def item_url
       # `shopId` and `zoneId` (and Cookie auth) are required for retrieving the
-      # price. Postal code is not required and is set to an empty string here.
-      %Q(https://sameday.costco.com/graphql?operationName=Items&variables=%7B%22ids%22%3A%5B%22#{@id}%22%5D%2C%22shopId%22%3A%22#{SHOP_ID}%22%2C%22zoneId%22%3A%22#{ZONE_ID}%22%2C%22postalCode%22%3A%22%22%7D&extensions=%7B%22persistedQuery%22:%7B%22version%22:1,%22sha256Hash%22:%220569d5997f69659900bde2d8b65943a3968b7d4a52e7851d564f7f35d4596f85%22%7D%7D)
+      # price. Postal code is required for getting the price.
+      %Q(https://sameday.costco.com/graphql?operationName=Items&variables=%7B%22ids%22%3A%5B%22#{@id}%22%5D%2C%22shopId%22%3A%22#{SHOP_ID}%22%2C%22zoneId%22%3A%22#{ZONE_ID}%22%2C%22postalCode%22%3A%22#{POSTAL_CODE}%22%7D&extensions=%7B%22persistedQuery%22:%7B%22version%22:1,%22sha256Hash%22:%220569d5997f69659900bde2d8b65943a3968b7d4a52e7851d564f7f35d4596f85%22%7D%7D)
     end
   end
 end

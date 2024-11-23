@@ -9,4 +9,5 @@ require_relative "instacart/item"
 module Instacart
   SHOP_ID = 1287.to_s # Costco Seattle (4th St.)
   ZONE_ID = 33.to_s
+  POSTAL_CODE = 98105
 end
